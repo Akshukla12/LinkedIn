@@ -6,6 +6,7 @@ import AboutMe from "./pages/AboutMe";
 import Headline from "./pages/Headline";
 import Skills from "./pages/Skills";
 import JobMatch from "./pages/JobMatch";
+import AnimationShowcase from "./pages/AnimationShowcase";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/headline" element={<Headline />} />
           <Route path="/skills" element={<Skills />} />
           <Route path="/job-match" element={<JobMatch />} />
+          <Route path="/animations" element={<AnimationShowcase />} />
         </Route>
       </Routes>
     </Router>

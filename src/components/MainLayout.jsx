@@ -2,6 +2,7 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Sidebar from './Sidebar';
+import AnimatedFooter from './AnimatedFooter';
 
 const MainLayout = () => {
   return (
@@ -26,6 +27,8 @@ const MainLayout = () => {
             </header>
             <Outlet />
           </div>
+          {/* Animated Footer */}
+          <AnimatedFooter />
         </main>
       </div>
     </div>
@@ -33,3 +36,4 @@ const MainLayout = () => {
 };
 
 export default MainLayout;
+
