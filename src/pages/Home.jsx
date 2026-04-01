@@ -1,481 +1,249 @@
-import React, { useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
-import { User, FileText, Award, ArrowRight, Sparkles, TrendingUp, Users, Zap, Briefcase } from "lucide-react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useSmoothScroll } from "../hooks/useSmoothScroll";
-import { useStaggerFade } from "../hooks/useScrollAnimations";
+import React, { useRef } from 'react';
+import { Link } from 'react-router-dom';
 import {
-  MagneticButton,
-  TiltCard,
-  FloatingIcon,
-  AnimatedBadge,
-  PulseDot
-} from "../components/MicroInteractionComponents";
-import FloatingShapes3D from "../components/FloatingShapes3D";
-import CustomCursor from "../components/CustomCursor";
+  User, FileText, Award, Briefcase,
+  ArrowRight, Sparkles, Zap, TrendingUp,
+  CheckCircle2, ChevronRight
+} from 'lucide-react';
+import { motion, useInView } from 'framer-motion';
 
-gsap.registerPlugin(ScrollTrigger);
+/* ── Color constants ── */
+const BLUE  = '#0A66C2';
+const BLUE_HOVER = '#0D73D4';
+const NAVY  = '#050B16';
 
-const features = [
-  {
-    icon: User,
-    title: "About Me Generator",
-    description: "Create compelling professional summaries that showcase your expertise and personality.",
-    path: "/about",
-    color: "from-blue-600 via-blue-500 to-cyan-500",
-    badge: "Popular"
-  },
-  {
-    icon: FileText,
-    title: "Headline Generator",
-    description: "Craft attention-grabbing headlines that make you stand out to recruiters.",
-    path: "/headline",
-    color: "from-purple-600 via-violet-500 to-pink-500",
-    badge: "New"
-  },
-  {
-    icon: Award,
-    title: "Skills Generator",
-    description: "Identify and list the most relevant skills for your industry and role.",
-    path: "/skills",
-    color: "from-emerald-600 via-green-500 to-teal-500",
-    badge: "Featured"
-  },
-  {
-    icon: Briefcase,
-    title: "Job Keyword Matcher",
-    description: "Optimize your profile by analyzing it against any job description for keyword alignment.",
-    path: "/job-match",
-    color: "from-orange-600 via-orange-500 to-rose-500",
-    badge: "Pro"
-  }
+/* ── DATA ── */
+const tools = [
+  { id:'about',     icon:User,     title:'About Me Generator',   desc:'Craft a compelling professional summary that showcases your expertise and draws recruiters in.',                              path:'/about',     badge:'Most Popular', large:true,  dark:false },
+  { id:'headline',  icon:FileText, title:'Headline Generator',    desc:'Create punchy, keyword-rich headlines that stand out in search results.',                                                    path:'/headline',  badge:'New',          large:false, dark:true  },
+  { id:'skills',    icon:Award,    title:'Skills Generator',      desc:'Identify the most relevant skills for your role and industry in seconds.',                                                   path:'/skills',    badge:'Featured',     large:false, dark:true  },
+  { id:'job-match', icon:Briefcase,title:'Job Keyword Matcher',   desc:'Align your profile with any job description to maximize recruiter visibility and ATS scores.',                               path:'/job-match', badge:'Pro',           large:true,  dark:false },
 ];
 
 const stats = [
-  { icon: Users, value: "50K+", label: "Profiles Created" },
-  { icon: TrendingUp, value: "98%", label: "Success Rate" },
-  { icon: Zap, value: "24/7", label: "Available" },
+  { value:'10K+',  label:'Profiles Optimized', icon:TrendingUp  },
+  { value:'98%',   label:'Success Rate',        icon:CheckCircle2},
+  { value:'< 30s', label:'Generation Time',     icon:Zap         },
 ];
 
-function Home() {
-  // Enable smooth scrolling
-  useSmoothScroll();
-  // useCustomCursor(); // Disabled for now - uncomment to enable custom cursor
+const steps = [
+  { n:'01', title:'Describe Yourself', desc:'Tell us your role, key skills, and what makes you unique in a few sentences.'                              },
+  { n:'02', title:'AI Generates',      desc:'Gemini AI creates tailored, professional content optimised for LinkedIn recruiters.'                        },
+  { n:'03', title:'Copy & Publish',    desc:'Review, refine, and paste directly into your LinkedIn profile — done in under 60 seconds.'                 },
+];
 
-  // Refs for GSAP animations
-  const heroRef = useRef(null);
-  const statsRef = useRef(null);
-  const ctaRef = useRef(null);
-  const backgroundRef = useRef(null);
+/* ── Bento Card ── */
+const BentoCard = ({ tool, index }) => {
+  const ref    = useRef(null);
+  const inView = useInView(ref, { once:true, margin:'-60px' });
+  const Icon   = tool.icon;
 
-  // Stagger animation for feature cards
-  const featuresGridRef = useStaggerFade({ stagger: 0.15, duration: 0.8, y: 60 });
-
-  // Advanced GSAP animations
-  useEffect(() => {
-    const hero = heroRef.current;
-    if (!hero) return;
-
-    // Sparkle icon enhanced animation
-    const sparkle = hero.querySelector('.sparkle-icon');
-    if (sparkle) {
-      gsap.to(sparkle, {
-        scale: 1.2,
-        duration: 2,
-        repeat: -1,
-        yoyo: true,
-        ease: 'power1.inOut',
-      });
-    }
-
-    // Title word reveal animation
-    const title = hero.querySelector('.hero-title');
-    if (title) {
-      const text = title.textContent;
-      const words = text.split(' ');
-      title.innerHTML = words
-        .map((word) => `<span class="inline-block" style="opacity: 0; transform: translateY(20px);">${word}</span>`)
-        .join(' ');
-
-      gsap.to(title.querySelectorAll('span'), {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        stagger: 0.1,
-        ease: 'power3.out',
-        delay: 0.3,
-      });
-    }
-
-    // Subtitle fade in
-    const subtitle = hero.querySelector('.hero-subtitle');
-    if (subtitle) {
-      gsap.fromTo(
-        subtitle,
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          delay: 0.8,
-          ease: 'power3.out',
-        }
-      );
-    }
-
-    // Background pulse animation
-    if (backgroundRef.current) {
-      gsap.to(backgroundRef.current, {
-        scale: 1.05,
-        duration: 8,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
-      });
-    }
-  }, []);
-
-  // Feature cards hover animations
-  useEffect(() => {
-    const cards = document.querySelectorAll('.feature-card');
-
-    cards.forEach((card) => {
-      const icon = card.querySelector('.feature-icon');
-      const arrow = card.querySelector('.feature-arrow');
-
-      card.addEventListener('mouseenter', () => {
-        if (icon) {
-          gsap.to(icon, {
-            scale: 1.15,
-            rotation: 5,
-            duration: 0.4,
-            ease: 'back.out(1.7)',
-          });
-        }
-
-        if (arrow) {
-          gsap.to(arrow, {
-            x: 8,
-            duration: 0.3,
-            ease: 'power2.out',
-          });
-        }
-      });
-
-      card.addEventListener('mouseleave', () => {
-        if (icon) {
-          gsap.to(icon, {
-            scale: 1,
-            rotation: 0,
-            duration: 0.4,
-            ease: 'power2.out',
-          });
-        }
-
-        if (arrow) {
-          gsap.to(arrow, {
-            x: 0,
-            duration: 0.3,
-            ease: 'power2.out',
-          });
-        }
-      });
-    });
-
-    return () => {
-      cards.forEach((card) => {
-        card.replaceWith(card.cloneNode(true));
-      });
-    };
-  }, []);
-
-  // Stats counter animation
-  useEffect(() => {
-    const statsSection = statsRef.current;
-    if (!statsSection) return;
-
-    ScrollTrigger.create({
-      trigger: statsSection,
-      start: 'top 70%',
-      onEnter: () => {
-        const statIcons = statsSection.querySelectorAll('.stat-icon');
-        gsap.fromTo(statIcons,
-          {
-            scale: 0,
-            rotation: -180,
-            opacity: 0,
-          },
-          {
-            scale: 1,
-            rotation: 0,
-            opacity: 1,
-            duration: 0.8,
-            stagger: 0.1,
-            ease: 'back.out(1.7)',
-          }
-        );
-
-        const statValues = statsSection.querySelectorAll('.stat-value');
-        statValues.forEach((stat) => {
-          const text = stat.getAttribute('data-value') || stat.textContent;
-          const hasPlus = text.includes('+');
-          const hasPercent = text.includes('%');
-          const hasSlash = text.includes('/');
-
-          if (hasSlash) {
-            // For "24/7", just fade in without changing text
-            gsap.to(stat, {
-              opacity: 1,
-              scale: 1,
-              duration: 0.8,
-              ease: 'back.out(1.7)',
-            });
-          } else {
-            const number = parseInt(text.replace(/[^0-9]/g, ''));
-            if (!isNaN(number)) {
-              // Set initial text to 0 and animate to target
-              stat.textContent = '0' + (hasPlus ? 'K+' : hasPercent ? '%' : '');
-              gsap.to(stat, {
-                textContent: number,
-                opacity: 1,
-                duration: 2,
-                ease: 'power1.out',
-                snap: { textContent: 1 },
-                onUpdate: function () {
-                  const current = Math.ceil(this.targets()[0].textContent);
-                  stat.textContent = current + (hasPlus ? 'K+' : hasPercent ? '%' : '');
-                }
-              });
-            }
-          }
-        });
-      },
-      once: true,
-    });
-
-    return () => {
-      ScrollTrigger.getAll().forEach((trigger) => {
-        if (trigger.vars.trigger === statsSection) {
-          trigger.kill();
-        }
-      });
-    };
-  }, []);
-
-  // CTA section animation
-  useEffect(() => {
-    const cta = ctaRef.current;
-    if (!cta) return;
-
-    gsap.fromTo(
-      cta,
-      { opacity: 0, scale: 0.9, y: 30 },
-      {
-        opacity: 1,
-        scale: 1,
-        y: 0,
-        duration: 1,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: cta,
-          start: 'top 85%',
-          toggleActions: 'play none none reverse',
-        },
-      }
-    );
-
-    return () => {
-      ScrollTrigger.getAll().forEach((trigger) => {
-        if (trigger.vars.trigger === cta) {
-          trigger.kill();
-        }
-      });
-    };
-  }, []);
+  /* Alternating: large cards = LinkedIn blue, small cards = navy */
+  const bg       = tool.dark ? NAVY  : BLUE;
+  const hoverShadow = tool.dark
+    ? '0 12px 40px rgba(5,11,22,0.35)'
+    : '0 12px 40px rgba(10,102,194,0.35)';
+  const baseShadow  = tool.dark
+    ? '0 4px 20px rgba(5,11,22,0.2)'
+    : '0 4px 20px rgba(10,102,194,0.22)';
 
   return (
-    <div className="relative max-w-6xl mx-auto px-4 sm:px-6 overflow-hidden">
-      {/* Custom Cursor */}
-      <CustomCursor />
-
-      {/* 3D Floating Shapes Background */}
-      <FloatingShapes3D />
-
-      {/* Animated background gradient */}
-      <div
-        ref={backgroundRef}
-        className="fixed inset-0 -z-10 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-950 dark:via-slate-900 dark:to-blue-950 opacity-60"
-      />
-
-      {/* Animated Gradient Orbs */}
-      <div className="fixed inset-0 -z-9 overflow-hidden pointer-events-none">
-        {/* Blue Orb - Top Left */}
-        <div className="absolute -top-40 -left-40 w-80 h-80 bg-gradient-to-br from-blue-400 to-cyan-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" />
-
-        {/* Purple Orb - Top Right */}
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-purple-400 to-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000" />
-
-        {/* Teal Orb - Bottom Center */}
-        <div className="absolute -bottom-40 left-1/2 -translate-x-1/2 w-80 h-80 bg-gradient-to-br from-teal-400 to-emerald-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000" />
-
-        {/* Indigo Orb - Middle Left */}
-        <div className="absolute top-1/2 -left-20 w-72 h-72 bg-gradient-to-br from-indigo-400 to-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-blob animation-delay-3000" />
-
-        {/* Rose Orb - Middle Right */}
-        <div className="absolute top-1/3 -right-20 w-72 h-72 bg-gradient-to-br from-rose-400 to-orange-300 rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-blob animation-delay-5000" />
-      </div>
-
-      {/* Grid Pattern Overlay */}
-      <div className="fixed inset-0 -z-8 opacity-[0.02] dark:opacity-[0.05] pointer-events-none">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `
-            linear-gradient(to right, rgb(99, 102, 241) 1px, transparent 1px),
-            linear-gradient(to bottom, rgb(99, 102, 241) 1px, transparent 1px)
-          `,
-          backgroundSize: '80px 80px'
-        }} />
-      </div>
-
-      {/* Radial Gradient Overlays for Depth */}
-      <div className="fixed inset-0 -z-7 pointer-events-none">
-        <div className="absolute top-0 left-0 right-0 h-96 bg-gradient-radial from-blue-100/30 via-transparent to-transparent dark:from-blue-900/20" />
-        <div className="absolute bottom-0 left-0 right-0 h-96 bg-gradient-radial from-indigo-100/30 via-transparent to-transparent dark:from-indigo-900/20" />
-      </div>
-
-      {/* Hero Section */}
-      <div
-        ref={heroRef}
-        className="text-center mb-8 sm:mb-12 lg:mb-16 pt-8"
+    <motion.div ref={ref} initial={{ opacity:0, y:28 }} animate={inView ? { opacity:1, y:0 } : {}} transition={{ duration:0.5, delay:index*0.08, ease:[0.16,1,0.3,1] }}>
+      <Link
+        to={tool.path}
+        id={`tool-card-${tool.id}`}
+        aria-label={`Open ${tool.title}`}
+        className="group flex flex-col h-full rounded-2xl p-6 relative overflow-hidden transition-all duration-300 cursor-pointer"
+        style={{ background:bg, minHeight:tool.large ? '210px' : '180px', boxShadow:baseShadow }}
+        onMouseEnter={e => { e.currentTarget.style.transform='translateY(-3px)'; e.currentTarget.style.boxShadow=hoverShadow; }}
+        onMouseLeave={e => { e.currentTarget.style.transform='translateY(0)';    e.currentTarget.style.boxShadow=baseShadow;  }}
       >
-        <div className="relative inline-block mb-4 sm:mb-6">
-          <FloatingIcon duration={3} y={15} rotation={10}>
-            <div className="sparkle-icon">
-              <Sparkles className="w-8 h-8 sm:w-12 sm:h-12 text-yellow-400 drop-shadow-lg" />
-            </div>
-          </FloatingIcon>
+        {/* Badge */}
+        {tool.badge && (
+          <span className="absolute top-4 right-4 text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full"
+            style={{ background:'rgba(255,255,255,0.14)', color:'rgba(255,255,255,0.75)' }}>
+            {tool.badge}
+          </span>
+        )}
 
-          <h2 className="hero-title text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-2 sm:mb-4 leading-tight mt-4">
-            Elevate Your LinkedIn Profile
-          </h2>
+        {/* Icon */}
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 shrink-0 transition-transform duration-300 group-hover:scale-110"
+          style={{ background:'rgba(255,255,255,0.14)' }}>
+          <Icon className="w-5 h-5" style={{ color:'#FFFFFF' }} />
         </div>
 
-        <p className="hero-subtitle text-base sm:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed px-4">
-          Transform your professional presence with AI-powered content generation.
-          Create compelling profiles that attract opportunities and showcase your expertise.
+        <p className="text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color:'rgba(255,255,255,0.5)', letterSpacing:'0.1em' }}>
+          AI Tool
+        </p>
+        <h2 className="font-sans font-bold text-[1.125rem] mb-2" style={{ color:'#FFFFFF', letterSpacing:'-0.02em', lineHeight:'1.2' }}>
+          {tool.title}
+        </h2>
+        <p className="text-sm leading-relaxed flex-1" style={{ color:'rgba(255,255,255,0.65)' }}>
+          {tool.desc}
         </p>
 
-        {/* Status indicator */}
-        <div className="flex items-center justify-center gap-2 mt-6">
-          <PulseDot color="green" size="sm" />
-          <span className="text-sm text-muted-foreground">AI-Powered & Ready</span>
+        {/* CTA */}
+        <div className="flex items-center gap-1.5 mt-5 text-sm font-semibold" style={{ color:'rgba(255,255,255,0.9)' }}>
+          <span>Learn more</span>
+          <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1.5" />
         </div>
+      </Link>
+    </motion.div>
+  );
+};
+
+/* ── Stats Bar ── */
+const StatsBar = () => {
+  const ref    = useRef(null);
+  const inView = useInView(ref, { once:true, margin:'-40px' });
+  return (
+    <motion.div ref={ref} initial={{ opacity:0, y:20 }} animate={inView ? { opacity:1, y:0 } : {}} transition={{ duration:0.5 }}
+      className="card-white px-6 py-6 flex flex-col sm:flex-row items-center justify-around gap-6 sm:gap-0 my-12">
+      {stats.map((s, i) => {
+        const Icon = s.icon;
+        return (
+          <React.Fragment key={i}>
+            <div className="flex flex-col items-center gap-1 text-center">
+              <div className="flex items-center gap-2 mb-0.5">
+                <Icon className="w-4 h-4" style={{ color:BLUE }} />
+                <span className="stat-value">{s.value}</span>
+              </div>
+              <span className="text-xs font-medium" style={{ color:'#6B7280' }}>{s.label}</span>
+            </div>
+            {i < stats.length-1 && <div className="hidden sm:block w-px h-10" style={{ background:'#E2E8F0' }} />}
+          </React.Fragment>
+        );
+      })}
+    </motion.div>
+  );
+};
+
+/* ── How It Works ── */
+const HowItWorks = () => {
+  const ref    = useRef(null);
+  const inView = useInView(ref, { once:true, margin:'-60px' });
+  return (
+    <section ref={ref} aria-labelledby="how-it-works-heading" className="mb-20">
+      <motion.div initial={{ opacity:0, y:16 }} animate={inView ? { opacity:1, y:0 } : {}} transition={{ duration:0.4 }} className="text-center mb-10">
+        <div className="kicker inline-flex mx-auto mb-4"><Zap className="w-3 h-3" /> How It Works</div>
+        <h2 id="how-it-works-heading" className="font-sans font-bold text-2xl sm:text-3xl" style={{ color:NAVY, letterSpacing:'-0.025em' }}>
+          Three steps to a standout profile
+        </h2>
+      </motion.div>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 relative">
+        <div aria-hidden="true" className="hidden sm:block absolute top-8 left-[16.667%] right-[16.667%] h-px" style={{ background:'linear-gradient(90deg, transparent, #E2E8F0 20%, #E2E8F0 80%, transparent)' }} />
+        {steps.map((step, i) => (
+          <motion.div key={i} initial={{ opacity:0, y:24 }} animate={inView ? { opacity:1, y:0 } : {}} transition={{ duration:0.45, delay:i*0.1+0.1, ease:[0.16,1,0.3,1] }}
+            className="card-white flex flex-col items-center text-center px-6 py-8">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center mb-4 z-10 font-mono text-sm font-bold"
+              style={{ background:'#EFF6FF', border:`2px solid #BFDBFE`, color:BLUE }}>
+              {step.n}
+            </div>
+            <h3 className="font-sans font-bold text-base mb-2" style={{ color:NAVY, letterSpacing:'-0.01em' }}>{step.title}</h3>
+            <p className="text-sm leading-relaxed" style={{ color:'#6B7280' }}>{step.desc}</p>
+          </motion.div>
+        ))}
       </div>
+    </section>
+  );
+};
 
-      {/* Features Grid */}
-      <div ref={featuresGridRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12 lg:mb-16">
-        {features.map((feature, index) => {
-          const Icon = feature.icon;
-          return (
-            <TiltCard
-              key={feature.path}
-              maxTilt={8}
-              className="feature-card group h-full relative overflow-hidden"
-            >
-              <Link
-                to={feature.path}
-                className="block h-full"
-              >
-                {/* Badge */}
-                {feature.badge && (
-                  <div className="absolute top-4 right-4 z-10">
-                    <AnimatedBadge color={index === 0 ? 'blue' : index === 1 ? 'purple' : index === 2 ? 'green' : 'red'}>
-                      {feature.badge}
-                    </AnimatedBadge>
-                  </div>
-                )}
+/* ── HOME PAGE ── */
+function Home() {
+  return (
+    <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 overflow-hidden">
 
-                <div className={`feature-icon w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-4 sm:mb-6 mx-auto sm:mx-0 shadow-lg`}>
-                  <Icon className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-white" />
-                </div>
+      {/* ── HERO ── */}
+      <section aria-labelledby="hero-heading" className="relative text-center pt-16 sm:pt-24 pb-10">
+        <motion.div initial={{ opacity:0, y:-12 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.4 }} className="inline-flex justify-center mb-6">
+          <span className="kicker"><Sparkles className="w-3 h-3" /> AI-Powered · Gemini 2.0 · Free</span>
+        </motion.div>
 
-                <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-card-foreground mb-2 sm:mb-3 group-hover:text-primary transition-colors text-center sm:text-left">
-                  {feature.title}
-                </h3>
+        <motion.h1 id="hero-heading" initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.55, delay:0.1, ease:[0.16,1,0.3,1] }}
+          className="mx-auto max-w-4xl px-2 mb-6"
+          style={{ fontSize:'clamp(2.125rem, 6vw, 4rem)', lineHeight:1.1, letterSpacing:'-0.03em' }}>
+          <span className="block font-sans font-bold" style={{ color:NAVY }}>
+            Grow your career with
+          </span>
+          <span className="block font-display italic"
+            style={{ fontFamily:'"Instrument Serif", Georgia, serif', color:BLUE, fontWeight:400 }}>
+            AI-Driven Profile Building.
+          </span>
+        </motion.h1>
 
-                <p className="text-muted-foreground text-sm sm:text-base mb-4 sm:mb-6 leading-relaxed text-center sm:text-left">
-                  {feature.description}
-                </p>
+        <motion.p initial={{ opacity:0, y:16 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.5, delay:0.2 }}
+          className="mx-auto max-w-xl mb-9 leading-relaxed" style={{ fontSize:'1.0625rem', color:'#6B7280' }}>
+          Transform your professional presence with AI. Generate compelling summaries,
+          headlines, and skills that attract recruiters and open doors.
+        </motion.p>
 
-                <div className="flex items-center justify-center sm:justify-start text-primary font-semibold">
-                  <span className="text-sm sm:text-base">Get Started</span>
-                  <ArrowRight className="feature-arrow w-4 h-4 ml-2" />
-                </div>
-              </Link>
-            </TiltCard>
-          );
-        })}
-      </div>
-
-      {/* Stats Section */}
-      <div
-        ref={statsRef}
-        className="bg-gradient-to-br from-blue-600 via-indigo-600 to-violet-600 rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-12 text-white text-center shadow-2xl relative overflow-hidden mb-8 sm:mb-12 lg:mb-16 border border-white/10"
-      >
-        {/* Animated background pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.15),transparent_50%)]" />
-        </div>
-
-        <div className="relative z-10">
-          <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3 sm:mb-4 lg:mb-6">
-            Join Thousands of Professionals
-          </h3>
-          <p className="text-white/90 text-sm sm:text-base lg:text-lg mb-6 sm:mb-8 lg:mb-12 max-w-3xl mx-auto leading-relaxed">
-            Our AI-powered tools have helped professionals create standout LinkedIn profiles
-            that attract recruiters and unlock new opportunities.
-          </p>
-
-          <div className="grid grid-cols-3 gap-4 sm:gap-6 lg:gap-8 max-w-2xl mx-auto">
-            {stats.map((stat, index) => {
-              const Icon = stat.icon;
-              return (
-                <div key={index} className="text-center">
-                  <FloatingIcon duration={2 + index * 0.5} y={8} delay={index * 0.2}>
-                    <div className="stat-icon w-12 h-12 sm:w-16 sm:h-16 bg-white/20 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-2 sm:mb-3 backdrop-blur-sm opacity-0">
-                      <Icon className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
-                    </div>
-                  </FloatingIcon>
-                  <div className="stat-value text-xl sm:text-2xl lg:text-3xl font-bold mb-1 opacity-0" data-value={stat.value}>{stat.value}</div>
-                  <div className="text-xs sm:text-sm text-white/80">{stat.label}</div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      {/* Call to Action */}
-      <div
-        ref={ctaRef}
-        className="text-center mb-8"
-      >
-        <TiltCard maxTilt={5} className="max-w-2xl mx-auto">
-          <h3 className="text-xl sm:text-2xl font-bold text-card-foreground mb-3 sm:mb-4">
-            Ready to Transform Your Profile?
-          </h3>
-          <p className="text-muted-foreground text-sm sm:text-base mb-4 sm:mb-6">
-            Start with any of our AI-powered tools and create professional content in minutes.
-          </p>
-
-          <Link to="/about">
-            <MagneticButton strength={0.4}>
-              <Sparkles className="w-5 h-5" />
-              <span className="text-sm sm:text-base">Start Building Now</span>
-            </MagneticButton>
+        <motion.div initial={{ opacity:0, y:14 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.45, delay:0.3 }}
+          className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-8">
+          <Link to="/about" id="hero-primary-cta" className="btn-primary text-base px-7 py-3.5 rounded-xl">
+            <Sparkles className="w-4 h-4" /> Start Building Free <ArrowRight className="w-4 h-4" />
           </Link>
-        </TiltCard>
-      </div>
+          <a href="#how-it-works" id="hero-secondary-cta" className="btn-outline text-[0.9375rem] px-5 py-3.5 rounded-xl">
+            See how it works <ChevronRight className="w-4 h-4" />
+          </a>
+        </motion.div>
+
+        <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ duration:0.5, delay:0.45 }}
+          className="flex items-center justify-center gap-2 text-xs" style={{ color:'#9CA3AF' }}>
+          <div className="w-1.5 h-1.5 rounded-full" style={{ background:'#10B981' }} />
+          <span>Powered by Gemini 2.0 · No signup required · Free forever</span>
+        </motion.div>
+      </section>
+
+      {/* ── STATS ── */}
+      <StatsBar />
+
+      {/* ── BENTO GRID ── */}
+      <section aria-labelledby="tools-heading" className="mb-20">
+        <motion.div initial={{ opacity:0, y:16 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true, margin:'-60px' }} transition={{ duration:0.4 }}
+          className="flex items-baseline justify-between mb-6">
+          <h2 id="tools-heading" className="font-sans font-bold text-xl" style={{ color:NAVY, letterSpacing:'-0.02em' }}>Pick your tool</h2>
+          <span className="text-xs font-medium" style={{ color:'#9CA3AF' }}>4 AI-powered generators</span>
+        </motion.div>
+
+        <div className="grid gap-3" style={{ gridTemplateColumns:'repeat(3, 1fr)', gridTemplateAreas:`"about about headline" "skills job-match job-match"` }}>
+          {tools.map((tool, i) => (
+            <div key={tool.id} style={{ gridArea:tool.id }}>
+              <BentoCard tool={tool} index={i} />
+            </div>
+          ))}
+        </div>
+
+        <style>{`
+          @media (max-width: 1023px) {
+            [style*="grid-template-areas"] { grid-template-columns:1fr !important; grid-template-areas:none !important; }
+            [style*="grid-area"] { grid-area:auto !important; }
+          }
+        `}</style>
+      </section>
+
+      {/* ── HOW IT WORKS ── */}
+      <div id="how-it-works"><HowItWorks /></div>
+
+      {/* ── NAVY CTA BANNER ── */}
+      <motion.section initial={{ opacity:0, y:24 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true, margin:'-60px' }} transition={{ duration:0.5 }}
+        aria-label="Call to action" className="navy-section px-8 py-14 text-center mb-16">
+        <div className="kicker inline-flex mx-auto mb-5"
+          style={{ background:'rgba(255,255,255,0.15)', borderColor:'rgba(255,255,255,0.3)', color:'#FFFFFF' }}>
+          <Sparkles className="w-3 h-3" /> Ready to stand out?
+        </div>
+        <h2 className="font-sans font-bold text-3xl sm:text-4xl mb-3" style={{ color:'#FFFFFF', letterSpacing:'-0.025em', lineHeight:1.1 }}>
+          Your best profile{' '}
+          <span className="font-display italic" style={{ fontFamily:'"Instrument Serif", Georgia, serif', color:'rgba(255,255,255,0.85)', fontWeight:400 }}>
+            starts here.
+          </span>
+        </h2>
+        <p className="mb-8 max-w-md mx-auto leading-relaxed" style={{ color:'#94A3B8', fontSize:'0.9375rem' }}>
+          Join thousands of professionals who've already upgraded their LinkedIn presence with AI.
+        </p>
+        <Link to="/about" id="cta-banner-btn" className="btn-primary inline-flex text-base px-8 py-3.5 rounded-xl">
+          <Zap className="w-4 h-4" /> Build My Profile Now
+        </Link>
+      </motion.section>
     </div>
   );
 }

@@ -5,9 +5,9 @@ const ThemeContext = createContext({
   setTheme: () => null,
 });
 
-export function ThemeProvider({ children, defaultTheme = 'system', storageKey = 'theme' }) {
+export function ThemeProvider({ children, defaultTheme = 'dark', storageKey = 'theme' }) {
   const [theme, setTheme] = useState(() => localStorage.getItem(storageKey) || defaultTheme);
-
+  /* Restore light/dark theme logic */
   useEffect(() => {
     const root = window.document.documentElement;
     root.classList.remove('light', 'dark');
@@ -15,11 +15,16 @@ export function ThemeProvider({ children, defaultTheme = 'system', storageKey = 
     if (theme === 'system') {
       const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
       root.classList.add(systemTheme);
-      return;
+    } else {
+      root.classList.add(theme);
     }
-
-    root.classList.add(theme);
   }, [theme]);
+
+  // Set default color theme to emerald without state overhead
+  useEffect(() => {
+    const root = window.document.documentElement;
+    root.setAttribute('data-theme', 'emerald');
+  }, []);
 
   const value = {
     theme,

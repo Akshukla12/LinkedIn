@@ -25,7 +25,7 @@ export const MagneticButton = ({
     return (
         <button
             ref={buttonRef}
-            className={`relative inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold hover:shadow-xl hover:shadow-blue-500/30 hover:scale-105 transition-all duration-300 ${className}`}
+            className={`relative inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold hover:shadow-xl hover:shadow-emerald-500/30 hover:scale-105 transition-all duration-300 ${className}`}
             onClick={onClick}
             {...props}
         >
@@ -102,7 +102,7 @@ export const AnimatedBadge = ({
     useFloatingAnimation(badgeRef, { duration: 2, y: 3, rotation: 2 });
 
     const colorClasses = {
-        blue: 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white',
+        blue: 'bg-gradient-to-r from-sky-600 to-blue-500 text-white',
         purple: 'bg-gradient-to-r from-purple-600 to-pink-500 text-white',
         green: 'bg-gradient-to-r from-emerald-600 to-teal-500 text-white',
         red: 'bg-gradient-to-r from-orange-600 to-rose-500 text-white',
@@ -178,12 +178,12 @@ export const GlowingButton = ({
     return (
         <button
             ref={buttonRef}
-            className={`relative inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 text-white px-8 py-4 rounded-xl font-semibold shadow-lg ${glowColors[glowColor]} hover:scale-105 transition-all duration-300 ${className}`}
+            className={`relative inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500 text-white px-8 py-4 rounded-xl font-semibold shadow-lg ${glowColors[glowColor]} hover:scale-105 transition-all duration-300 ${className}`}
             onClick={onClick}
             {...props}
         >
             <span className="relative z-10">{children}</span>
-            <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 blur-xl opacity-50 group-hover:opacity-75 transition-opacity" />
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500 blur-xl opacity-50 group-hover:opacity-75 transition-opacity" />
         </button>
     );
 };

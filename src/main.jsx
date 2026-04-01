@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { MantineProvider } from '@mantine/core'
 import App from './App.jsx'
 import './index.css'
+import './animations.css'
 import { ThemeProvider } from './context/ThemeContext.jsx'
 import { ProfileProvider } from './context/ProfileContext.jsx'
 
