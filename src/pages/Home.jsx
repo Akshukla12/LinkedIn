@@ -155,10 +155,6 @@ function Home() {
 
       {/* ── HERO ── */}
       <section aria-labelledby="hero-heading" className="relative text-center pt-16 sm:pt-24 pb-10">
-        <motion.div initial={{ opacity:0, y:-12 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.4 }} className="inline-flex justify-center mb-6">
-          <span className="kicker"><Sparkles className="w-3 h-3" /> AI-Powered · Gemini 2.0 · Free</span>
-        </motion.div>
-
         <motion.h1 id="hero-heading" initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.55, delay:0.1, ease:[0.16,1,0.3,1] }}
           className="mx-auto max-w-4xl px-2 mb-6"
           style={{ fontSize:'clamp(2.125rem, 6vw, 4rem)', lineHeight:1.1, letterSpacing:'-0.03em' }}>
@@ -187,11 +183,6 @@ function Home() {
           </a>
         </motion.div>
 
-        <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ duration:0.5, delay:0.45 }}
-          className="flex items-center justify-center gap-2 text-xs" style={{ color:'#9CA3AF' }}>
-          <div className="w-1.5 h-1.5 rounded-full" style={{ background:'#10B981' }} />
-          <span>Powered by Gemini 2.0 · No signup required · Free forever</span>
-        </motion.div>
       </section>
 
       {/* ── STATS ── */}
